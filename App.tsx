@@ -1,20 +1,15 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { Image, StyleSheet, Text, View } from 'react-native'
+import AppContainer from './src/components/app-container'
+import Navigator from './src/'
+import { useState } from 'react'
+import OnboardRoute from './src/onboard-route'
+import { isLoggedInAtom } from './src/redux'
+import { useAtom } from 'jotai'
 
 export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+  const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom)
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+  return (
+    <AppContainer>{isLoggedIn ? <Navigator /> : <OnboardRoute />}</AppContainer>
+  )
+}
