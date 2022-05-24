@@ -2,7 +2,19 @@ import { StatusBar } from 'expo-status-bar'
 import { useAtom } from 'jotai'
 import { StyleSheet, View, Text } from 'react-native'
 import { isLoggedInAtom } from '../redux'
-import { Avatar, Button } from 'native-base'
+import { Avatar, Box, Button } from 'native-base'
+import TodoList from '../components/todo-list'
+import { ToDo } from '../types'
+import { Heading } from 'native-base'
+import React from 'react'
+
+const TODOLIST: ToDo[] = [
+  { id: 1, title: 'Buy milk', isCompleted: false, isDeleted: false },
+  { id: 2, title: 'Buy eggs', isCompleted: true, isDeleted: false },
+  { id: 3, title: 'Buy bread', isCompleted: false, isDeleted: false },
+  { id: 4, title: 'Buy cheese', isCompleted: true, isDeleted: false },
+  { id: 5, title: 'Buy milk', isCompleted: true, isDeleted: false }
+]
 
 export default function MainScreen() {
   const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom)
@@ -32,14 +44,23 @@ export default function MainScreen() {
         <Button
           onPress={logOutHandle}
           backgroundColor="#F4C27F"
-          color="black"
           borderRadius="22"
         >
-          Log Out
+          <Text>Log Out</Text>
         </Button>
       </View>
       <View style={styles.content}>
-        <Text style={styles.taskTitle}>Task List</Text>
+        <Heading pb="10">Task List</Heading>
+        <Box
+          alignSelf="center"
+          borderRadius="24"
+          shadow="8"
+          width="350"
+          padding={22}
+          backgroundColor="white"
+        >
+          <TodoList todos={TODOLIST} />
+        </Box>
       </View>
       <StatusBar style="auto" />
     </View>
@@ -53,7 +74,7 @@ const styles = StyleSheet.create({
   },
   userCard: {
     flex: 0.4,
-    backgroundColor: '#F4C27F',
+    backgroundColor: 'rgba(244, 194, 127, 0.67)',
     height: 300,
     alignItems: 'center',
     justifyContent: 'center'
@@ -61,7 +82,9 @@ const styles = StyleSheet.create({
   content: {
     flex: 0.6,
     backgroundColor: 'white',
-    height: 20
+    height: 20,
+    alignItems: 'center',
+    paddingTop: 20
   },
   taskTitle: {
     fontSize: 18,
@@ -80,7 +103,6 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   logoutButton: {
-    backgroundColor: '#F4C27F',
-    color: 'black'
+    backgroundColor: '#F4C27F'
   }
 })

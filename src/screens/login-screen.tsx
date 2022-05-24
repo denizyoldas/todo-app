@@ -1,28 +1,55 @@
 import { StatusBar } from 'expo-status-bar'
-import { useAtom } from 'jotai'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import TodoButton from '../components/UI/TodoButton'
+import { Box, Input } from 'native-base'
+import { useCallback } from 'react'
 import { isLoggedInAtom } from '../redux'
+import { useAtom } from 'jotai'
 
-export default function LoginScreen() {
+const InputProps = {
+  my: '2',
+  padding: '3',
+  backgroundColor: 'white',
+  w: '100%',
+  borderRadius: 22,
+  size: 'xl'
+}
+
+export default function RegisterScreen({ navigation }: any) {
   const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom)
 
-  const loginHandle = () => {
-    console.log(isLoggedIn)
+  const registerNavigate = useCallback(
+    () => navigation.navigate('Register'),
+    [navigation]
+  )
+
+  const signInHandle = () => {
     setIsLoggedIn(true)
   }
 
   return (
     <View style={styles.container}>
       <Image style={styles.image} source={require('../../assets/Done.png')} />
-      <Text style={styles.text}>Get’s things done with TODO</Text>
+      <Text style={styles.text}>Welcome Back to</Text>
+      <Text style={styles.textBold}>OUR REMINDER</Text>
+      <Box alignItems="center" padding={10}>
+        <Input {...InputProps} placeholder="Enter your email" />
+        <Input {...InputProps} placeholder="Enter password" />
+      </Box>
+      <Text>Forgot Password</Text>
       <View style={styles.button}>
         <TodoButton
-          onPress={loginHandle}
-          text="Login"
-          accessibilityLabel="Login"
+          text="Sign In"
+          accessibilityLabel="Sign In"
+          onPress={signInHandle}
         />
       </View>
+      <Text style={styles.loginText}>
+        Don’t have an account ?{' '}
+        <Text onPress={registerNavigate} style={styles.signIn}>
+          Register
+        </Text>
+      </Text>
       <StatusBar style="auto" />
     </View>
   )
@@ -31,28 +58,39 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4C27F',
+    backgroundColor: 'rgba(244, 194, 127, 0.67)',
     alignItems: 'center'
   },
   image: {
-    marginTop: 160
+    marginTop: 25,
+    width: 285,
+    resizeMode: 'contain'
   },
-  welcomeText: {
+  text: {
     fontSize: 16,
     lineHeight: 18
   },
-  text: {
+  textBold: {
     fontSize: 24,
     lineHeight: 27
   },
   descriptionText: {
     fontSize: 12,
-    lineHeight: 16,
+    lineHeight: 23,
     width: 280,
     textAlign: 'center',
     marginTop: 13
   },
-  button: {
-    marginTop: 120
+  button: {},
+  loginText: {
+    fontSize: 14,
+    fontWeight: '400',
+    lineHeight: 16
+  },
+  signIn: {
+    fontSize: 14,
+    color: '#D8605B',
+    fontWeight: '700',
+    lineHeight: 16
   }
 })

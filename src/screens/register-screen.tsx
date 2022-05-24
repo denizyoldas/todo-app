@@ -48,7 +48,7 @@ export default function RegisterScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4C27F',
+    backgroundColor: 'rgba(244, 194, 127, 0.67)',
     alignItems: 'center'
   },
   image: {

@@ -15,7 +15,7 @@ const MenuButton = ({ active, icon, children, ...props }: Props) => {
       _light={{
         colorScheme: 'blue',
         _pressed: {
-          bg: 'primary.100'
+          bg: 'primary'
         },
         _text: {
           color: active ? 'blue.50' : 'blue.500'
@@ -24,7 +24,7 @@ const MenuButton = ({ active, icon, children, ...props }: Props) => {
       _dark={{
         colorScheme: 'darkBlue',
         _pressed: {
-          bg: 'primary.600'
+          bg: 'primary'
         },
         _text: {
           color: active ? 'blue.50' : undefined

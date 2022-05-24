@@ -1,11 +1,13 @@
 import { StatusBar } from 'expo-status-bar'
+import { useCallback } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import TodoButton from '../components/UI/TodoButton'
 
 export default function OnboardingScreen({ navigation }: any) {
-  const startHandle = () => {
-    navigation.navigate('Register')
-  }
+  const startHandle = useCallback(
+    () => navigation.navigate('Register'),
+    [navigation]
+  )
 
   return (
     <View style={styles.container}>
@@ -32,7 +34,7 @@ export default function OnboardingScreen({ navigation }: any) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F4C27F',
+    backgroundColor: 'rgba(244, 194, 127, 0.67)',
     alignItems: 'center'
   },
   image: {
