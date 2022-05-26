@@ -1,5 +1,5 @@
 import { atom } from 'jotai'
 
-const isLoggedInAtom = atom(true)
+const isLoggedInAtom = atom(false)
 
 export { isLoggedInAtom }
