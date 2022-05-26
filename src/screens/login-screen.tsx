@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import TodoButton from '../components/UI/TodoButton'
 import { Box, Input } from 'native-base'
-import { useCallback } from 'react'
-import { isLoggedInAtom } from '../redux'
+import { useCallback, useState } from 'react'
+import { isLoggedInAtom, userAtom } from '../redux'
 import { useAtom } from 'jotai'
 
 const InputProps = {
@@ -17,6 +17,9 @@ const InputProps = {
 
 export default function RegisterScreen({ navigation }: any) {
   const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom)
+  const [user, setUser] = useAtom(userAtom)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
 
   const registerNavigate = useCallback(
     () => navigation.navigate('Register'),
@@ -24,7 +27,12 @@ export default function RegisterScreen({ navigation }: any) {
   )
 
   const signInHandle = () => {
-    setIsLoggedIn(true)
+    console.log(email)
+    if (user?.email === email && user?.password === password) {
+      setIsLoggedIn(true)
+    } else {
+      Alert.alert('Error', 'Invalid email or password')
+    }
   }
 
   return (
@@ -33,8 +41,16 @@ export default function RegisterScreen({ navigation }: any) {
       <Text style={styles.text}>Welcome Back to</Text>
       <Text style={styles.textBold}>OUR REMINDER</Text>
       <Box alignItems="center" padding={10}>
-        <Input {...InputProps} placeholder="Enter your email" />
-        <Input {...InputProps} placeholder="Enter password" />
+        <Input
+          {...InputProps}
+          placeholder="Enter your email"
+          onChange={(e: any) => setEmail(e.target.value)}
+        />
+        <Input
+          {...InputProps}
+          placeholder="Enter password"
+          onChange={(e: any) => setPassword(e.target.value)}
+        />
       </Box>
       <Text>Forgot Password</Text>
       <View style={styles.button}>

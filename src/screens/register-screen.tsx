@@ -1,18 +1,12 @@
-import { StatusBar } from 'expo-status-bar'
-import {
-  Image,
-  Platform,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native'
+import { Image, Platform, StyleSheet, Text, View } from 'react-native'
 import TodoButton from '../components/UI/TodoButton'
 import { Box, Input, KeyboardAvoidingView, ScrollView } from 'native-base'
 import React, { useEffect, useRef } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Formik } from 'formik'
 import { RegisterModel } from '../types'
+import { userAtom } from '../redux'
+import { useAtom } from 'jotai'
 
 const InputProps = {
   my: '2',
@@ -31,6 +25,8 @@ const INITIAL_VALUE = {
 }
 
 export default function RegisterScreen({ navigation }: any) {
+  const [user, setUser] = useAtom(userAtom)
+
   useEffect(() => {
     AsyncStorage.setItem('isFirst', 'false')
   }, [])
@@ -41,91 +37,90 @@ export default function RegisterScreen({ navigation }: any) {
     navigation.navigate('Login')
   }
 
-  const onSubmitHandle = (value: RegisterModel) => {
-    console.log(value)
+  const onSubmitHandle = (value: any) => {
+    setUser(value)
   }
 
   return (
-    <SafeAreaView>
-      <KeyboardAvoidingView
-        enabled
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      >
-        <ScrollView>
-          <Formik onSubmit={onSubmitHandle} initialValues={INITIAL_VALUE}>
-            {({ handleChange, handleBlur, handleSubmit, values }) => (
-              <View style={styles.container}>
-                <Image
-                  style={styles.image}
-                  source={require('../../assets/Done.png')}
-                />
-                <Text style={styles.text}>Get’s things done</Text>
-                <Text style={styles.text}>with TODO</Text>
-                <Text style={styles.descriptionText}>
-                  Let’s help you meet up your tasks
-                </Text>
-                <Box alignItems="center" padding={10}>
-                  <View>
-                    <Input
-                      {...InputProps}
-                      placeholder="Enter your full name"
-                      onChangeText={handleChange('fullName')}
-                      onBlur={handleBlur('fullName')}
-                      value={values.fullName}
-                      onSubmitEditing={() => inputRef?.current?.focus()}
-                    />
-                    <Input
-                      ref={inputRef}
-                      {...InputProps}
-                      placeholder="Enter your email"
-                      onChangeText={handleChange('email')}
-                      onBlur={handleBlur('email')}
-                      value={values.email}
-                    />
-                    <Input
-                      {...InputProps}
-                      placeholder="Enter password"
-                      onChangeText={handleChange('password')}
-                      onBlur={handleBlur('password')}
-                      value={values.password}
-                    />
-                    <Input
-                      {...InputProps}
-                      placeholder="Confirm password"
-                      mb="0"
-                      onChangeText={handleChange('passwordConfirm')}
-                      onBlur={handleBlur('passwordConfirm')}
-                      value={values.passwordConfirm}
-                    />
-                  </View>
-                </Box>
-                <View style={styles.button}>
-                  <TodoButton
-                    text="Register"
-                    accessibilityLabel="Register"
-                    onPress={handleSubmit}
+    <KeyboardAvoidingView
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      style={{ flex: 1 }}
+    >
+      <ScrollView style={{ backgroundColor: 'rgba(244, 194, 127, 0.67)' }}>
+        <Formik onSubmit={onSubmitHandle} initialValues={INITIAL_VALUE}>
+          {({ handleChange, handleBlur, handleSubmit, values, resetForm }) => (
+            <View style={styles.container}>
+              <Image
+                style={styles.image}
+                source={require('../../assets/Done.png')}
+              />
+              <Text style={styles.text}>Get’s things done</Text>
+              <Text style={styles.text}>with TODO</Text>
+              <Text style={styles.descriptionText}>
+                Let’s help you meet up your tasks
+              </Text>
+              <Box alignItems="center" padding={10}>
+                <View>
+                  <Input
+                    {...InputProps}
+                    placeholder="Enter your full name"
+                    onChangeText={handleChange('fullName')}
+                    onBlur={handleBlur('fullName')}
+                    value={values.fullName}
+                    onSubmitEditing={() => inputRef?.current?.focus()}
+                  />
+                  <Input
+                    ref={inputRef}
+                    {...InputProps}
+                    placeholder="Enter your email"
+                    onChangeText={handleChange('email')}
+                    onBlur={handleBlur('email')}
+                    value={values.email}
+                  />
+                  <Input
+                    {...InputProps}
+                    placeholder="Enter password"
+                    onChangeText={handleChange('password')}
+                    onBlur={handleBlur('password')}
+                    value={values.password}
+                  />
+                  <Input
+                    {...InputProps}
+                    placeholder="Confirm password"
+                    mb="0"
+                    onChangeText={handleChange('passwordConfirm')}
+                    onBlur={handleBlur('passwordConfirm')}
+                    value={values.passwordConfirm}
                   />
                 </View>
-                <Text style={styles.loginText}>
-                  Already have an account ?{' '}
-                  <Text onPress={loginNavigate} style={styles.signIn}>
-                    Sign In
-                  </Text>
-                </Text>
+              </Box>
+              <View style={styles.button}>
+                <TodoButton
+                  text="Register"
+                  accessibilityLabel="Register"
+                  onPress={() => {
+                    handleSubmit()
+                    // resetForm()
+                  }}
+                />
               </View>
-            )}
-          </Formik>
-        </ScrollView>
-        <StatusBar style="auto" />
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+              <Text style={styles.loginText}>
+                Already have an account ?{' '}
+                <Text onPress={loginNavigate} style={styles.signIn}>
+                  Sign In
+                </Text>
+              </Text>
+            </View>
+          )}
+        </Formik>
+      </ScrollView>
+    </KeyboardAvoidingView>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(244, 194, 127, 0.67)',
     alignItems: 'center'
   },
   image: {
