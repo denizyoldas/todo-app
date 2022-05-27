@@ -7,6 +7,7 @@ import { Formik } from 'formik'
 import { RegisterModel } from '../types'
 import { userAtom } from '../redux'
 import { useAtom } from 'jotai'
+import KeyboardWrapper from '../components/kayboard-wrapper'
 
 const InputProps = {
   my: '2',
@@ -31,7 +32,9 @@ export default function RegisterScreen({ navigation }: any) {
     AsyncStorage.setItem('isFirst', 'false')
   }, [])
 
-  const inputRef = useRef()
+  const emailInpt = useRef()
+  const passwordInpt = useRef()
+  const passwordConfirmInpt = useRef()
 
   const loginNavigate = () => {
     navigation.navigate('Login')
@@ -48,7 +51,7 @@ export default function RegisterScreen({ navigation }: any) {
     >
       <ScrollView style={{ backgroundColor: 'rgba(244, 194, 127, 0.67)' }}>
         <Formik onSubmit={onSubmitHandle} initialValues={INITIAL_VALUE}>
-          {({ handleChange, handleBlur, handleSubmit, values, resetForm }) => (
+          {({ handleChange, handleBlur, handleSubmit, values, resetForm, focus }) => (
             <View style={styles.container}>
               <Image
                 style={styles.image}
@@ -67,25 +70,29 @@ export default function RegisterScreen({ navigation }: any) {
                     onChangeText={handleChange('fullName')}
                     onBlur={handleBlur('fullName')}
                     value={values.fullName}
-                    onSubmitEditing={() => inputRef?.current?.focus()}
+                    onSubmitEditing={() => emailInpt.current.focus()}
                   />
                   <Input
-                    ref={inputRef}
                     {...InputProps}
+                    ref={emailInpt}
                     placeholder="Enter your email"
                     onChangeText={handleChange('email')}
                     onBlur={handleBlur('email')}
                     value={values.email}
+                    onSubmitEditing={() => passwordInpt.current.focus()}
                   />
                   <Input
                     {...InputProps}
+                    ref={passwordInpt}
                     placeholder="Enter password"
                     onChangeText={handleChange('password')}
                     onBlur={handleBlur('password')}
                     value={values.password}
+                    onSubmitEditing={() => passwordConfirmInpt.current.focus()}
                   />
                   <Input
                     {...InputProps}
+                    ref={passwordConfirmInpt}
                     placeholder="Confirm password"
                     mb="0"
                     onChangeText={handleChange('passwordConfirm')}
