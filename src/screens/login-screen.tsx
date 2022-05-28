@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react'
 import { isLoggedInAtom, userAtom } from '../redux'
 import { useAtom } from 'jotai'
 import KeyboardWrapper from '../components/kayboard-wrapper'
+import { login } from '../services/auth'
 
 const InputProps = {
   my: '2',
@@ -27,8 +28,9 @@ export default function RegisterScreen({ navigation }: any) {
     [navigation]
   )
 
-  const signInHandle = () => {
-    setIsLoggedIn(true)
+  const signInHandle = async () => {
+    // setIsLoggedIn(true)
+    const res = await login({ email, password })
     // if (user?.email === email && user?.password === password) {
     //   setIsLoggedIn(true)
     // } else {
