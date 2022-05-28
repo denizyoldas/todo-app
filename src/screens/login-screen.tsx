@@ -5,6 +5,7 @@ import { Box, Input } from 'native-base'
 import { useCallback, useState } from 'react'
 import { isLoggedInAtom, userAtom } from '../redux'
 import { useAtom } from 'jotai'
+import KeyboardWrapper from '../components/kayboard-wrapper'
 
 const InputProps = {
   my: '2',
@@ -27,54 +28,58 @@ export default function RegisterScreen({ navigation }: any) {
   )
 
   const signInHandle = () => {
-    console.log(email)
-    if (user?.email === email && user?.password === password) {
-      setIsLoggedIn(true)
-    } else {
-      Alert.alert('Error', 'Invalid email or password')
-    }
+    setIsLoggedIn(true)
+    // if (user?.email === email && user?.password === password) {
+    //   setIsLoggedIn(true)
+    // } else {
+    //   Alert.alert('Error', 'Invalid email or password')
+    // }
   }
 
   return (
-    <View style={styles.container}>
-      <Image style={styles.image} source={require('../../assets/Done.png')} />
-      <Text style={styles.text}>Welcome Back to</Text>
-      <Text style={styles.textBold}>OUR REMINDER</Text>
-      <Box alignItems="center" padding={10}>
-        <Input
-          {...InputProps}
-          placeholder="Enter your email"
-          onChange={(e: any) => setEmail(e.target.value)}
-        />
-        <Input
-          {...InputProps}
-          placeholder="Enter password"
-          onChange={(e: any) => setPassword(e.target.value)}
-        />
-      </Box>
-      <Text>Forgot Password</Text>
-      <View style={styles.button}>
-        <TodoButton
-          text="Sign In"
-          accessibilityLabel="Sign In"
-          onPress={signInHandle}
-        />
-      </View>
-      <Text style={styles.loginText}>
-        Don’t have an account ?{' '}
-        <Text onPress={registerNavigate} style={styles.signIn}>
-          Register
+    <KeyboardWrapper style={{ backgroundColor: 'rgba(244, 194, 127, 0.67)' }}>
+      <View style={styles.container}>
+        <Image style={styles.image} source={require('../../assets/Done.png')} />
+        <Text style={styles.text}>Welcome Back to</Text>
+        <Text style={styles.textBold}>OUR REMINDER</Text>
+        <Box alignItems="center" padding={10}>
+          <Input
+            {...InputProps}
+            placeholder="Enter your email"
+            name="email"
+            onChange={(e: any) => setEmail(e.target.value)}
+          />
+          <Input
+            {...InputProps}
+            placeholder="Enter password"
+            name="password"
+            type="password"
+            onChange={(e: any) => setPassword(e.target.value)}
+          />
+        </Box>
+        <Text>Forgot Password</Text>
+        <View style={styles.button}>
+          <TodoButton
+            text="Sign In"
+            accessibilityLabel="Sign In"
+            onPress={signInHandle}
+          />
+        </View>
+        <Text style={styles.loginText}>
+          Don’t have an account ?{' '}
+          <Text onPress={registerNavigate} style={styles.signIn}>
+            Register
+          </Text>
         </Text>
-      </Text>
-      <StatusBar style="auto" />
-    </View>
+        <StatusBar style="auto" />
+      </View>
+    </KeyboardWrapper>
   )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'rgba(244, 194, 127, 0.67)',
     alignItems: 'center'
   },
   image: {

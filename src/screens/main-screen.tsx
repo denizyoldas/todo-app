@@ -1,12 +1,15 @@
 import { StatusBar } from 'expo-status-bar'
 import { useAtom } from 'jotai'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native'
 import { isLoggedInAtom } from '../redux'
-import { Avatar, Box, Button } from 'native-base'
+import { Avatar, Box, Button, Modal } from 'native-base'
 import TodoList from '../components/todo-list'
+import { AntDesign } from '@expo/vector-icons'
 import { ToDo } from '../types'
 import { Heading } from 'native-base'
-import React from 'react'
+import React, { useState } from 'react'
+import { MaterialIcons } from '@expo/vector-icons'
+import AppModal from '../components/app-modal'
 
 const TODOLIST: ToDo[] = [
   { id: 1, title: 'Buy milk', isCompleted: false, isDeleted: false },
@@ -18,9 +21,29 @@ const TODOLIST: ToDo[] = [
 
 export default function MainScreen() {
   const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom)
+  const [btnFocus, setBtnFocus] = useState(false)
+  const [modalVisible, setModalVisible] = useState(false)
+  const [todoList, setTodoList] = useState<ToDo[]>(TODOLIST)
 
   const logOutHandle = () => {
     setIsLoggedIn(false)
+  }
+
+  const addNewHandle = () => {
+    setModalVisible(true)
+  }
+
+  const modalSubmitHanlde = (text: string) => {
+    console.log(text)
+    setTodoList([
+      ...todoList,
+      {
+        id: todoList.length + 1,
+        title: text,
+        isCompleted: false,
+        isDeleted: false
+      }
+    ])
   }
 
   return (
@@ -36,21 +59,30 @@ export default function MainScreen() {
           backgroundColor="transparent"
           alignSelf="center"
           source={{
-            uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80'
+            // uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80'
+            uri: 'https://i.pravatar.cc/300'
           }}
         />
         <Text style={styles.fullName}>Monica Gamage</Text>
         <Text style={styles.username}>@monicagamage</Text>
         <Button
           onPress={logOutHandle}
-          backgroundColor="#F4C27F"
+          onFocus={() => setBtnFocus(true)}
+          backgroundColor={btnFocus ? 'transparent' : '#F4C27F'}
           borderRadius="22"
+          marginTop="3"
+          leftIcon={<MaterialIcons name="logout" size={12} color="black" />}
         >
-          <Text>Log Out</Text>
+          <Text> Log Out</Text>
         </Button>
       </View>
       <View style={styles.content}>
         <Heading pb="10">Task List</Heading>
+        <Box width="100%" paddingRight="8" mb="3" alignItems="flex-end">
+          <TouchableOpacity onPress={addNewHandle}>
+            <AntDesign name="pluscircleo" size={24} color="#F4C27F" />
+          </TouchableOpacity>
+        </Box>
         <Box
           alignSelf="center"
           borderRadius="24"
@@ -59,10 +91,15 @@ export default function MainScreen() {
           padding={22}
           backgroundColor="white"
         >
-          <TodoList todos={TODOLIST} />
+          <TodoList todos={todoList} />
         </Box>
       </View>
       <StatusBar style="auto" />
+      <AppModal
+        isVisible={modalVisible}
+        onClose={v => setModalVisible(v)}
+        onSubmit={modalSubmitHanlde}
+      />
     </View>
   )
 }
@@ -103,6 +140,8 @@ const styles = StyleSheet.create({
     fontSize: 14
   },
   logoutButton: {
-    backgroundColor: '#F4C27F'
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   }
 })

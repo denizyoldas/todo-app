@@ -25,7 +25,9 @@ export default function TodoItem({ todo, onTodoClick }: Props) {
         isChecked={todo.isCompleted}
         onChange={() => clickHandle(todo.id)}
         value={todo.title}
-        accessibilityLabel="This is a dummy checkbox"
+        colorScheme="rgba(244, 194, 127, 0.67)"
+        backgroundColor="rgba(244, 194, 127, 0.67)"
+        color="white"
       />
       <Text
         width="100%"
