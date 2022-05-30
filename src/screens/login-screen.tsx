@@ -29,8 +29,8 @@ export default function RegisterScreen({ navigation }: any) {
   )
 
   const signInHandle = async () => {
-    // setIsLoggedIn(true)
-    const res = await login({ email, password })
+    setIsLoggedIn(true)
+    // const res = await login({ email, password })
     // if (user?.email === email && user?.password === password) {
     //   setIsLoggedIn(true)
     // } else {

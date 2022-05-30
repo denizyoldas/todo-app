@@ -2,11 +2,10 @@ import { StatusBar } from 'expo-status-bar'
 import { useAtom } from 'jotai'
 import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native'
 import { isLoggedInAtom } from '../redux'
-import { Avatar, Box, Button, Modal } from 'native-base'
 import TodoList from '../components/todo-list'
 import { AntDesign } from '@expo/vector-icons'
 import { ToDo } from '../types'
-import { Heading } from 'native-base'
+import { Heading, Fab, Box, Avatar, Button } from 'native-base'
 import React, { useState } from 'react'
 import { MaterialIcons } from '@expo/vector-icons'
 import AppModal from '../components/app-modal'
@@ -78,11 +77,6 @@ export default function MainScreen() {
       </View>
       <View style={styles.content}>
         <Heading pb="10">Task List</Heading>
-        <Box width="100%" paddingRight="8" mb="3" alignItems="flex-end">
-          <TouchableOpacity onPress={addNewHandle}>
-            <AntDesign name="pluscircleo" size={24} color="#F4C27F" />
-          </TouchableOpacity>
-        </Box>
         <Box
           alignSelf="center"
           borderRadius="24"
@@ -100,6 +94,14 @@ export default function MainScreen() {
         onClose={v => setModalVisible(v)}
         onSubmit={modalSubmitHanlde}
       />
+      <Fab
+        renderInPortal={true}
+        shadow={2}
+        size="md"
+        bottom="10"
+        icon={<AntDesign name="pluscircle" size={56} color="#F4C27F" />}
+        onPress={}
+      />
     </View>
   )
 }
@@ -107,7 +109,8 @@ export default function MainScreen() {
 const styles = StyleSheet.create({
   container: {
     height: '100%',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    backgroundColor: 'whute'
   },
   userCard: {
     flex: 0.4,
