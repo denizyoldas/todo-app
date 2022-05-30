@@ -5,10 +5,11 @@ import { isLoggedInAtom } from '../redux'
 import TodoList from '../components/todo-list'
 import { AntDesign } from '@expo/vector-icons'
 import { ToDo } from '../types'
-import { Heading, Fab, Box, Avatar, Button } from 'native-base'
+import { Heading, Fab, Box, Avatar, Button, ZStack } from 'native-base'
 import React, { useState } from 'react'
 import { MaterialIcons } from '@expo/vector-icons'
 import AppModal from '../components/app-modal'
+import NewTodo from '../components/new-todo'
 
 const TODOLIST: ToDo[] = [
   { id: 1, title: 'Buy milk', isCompleted: false, isDeleted: false },
@@ -89,18 +90,21 @@ export default function MainScreen() {
         </Box>
       </View>
       <StatusBar style="auto" />
-      <AppModal
+      {/* <AppModal
         isVisible={modalVisible}
         onClose={v => setModalVisible(v)}
         onSubmit={modalSubmitHanlde}
-      />
+      /> */}
+        <NewTodo isOpen={modalVisible} />
       <Fab
         renderInPortal={true}
-        shadow={2}
         size="md"
         bottom="10"
+        shadow="0"
         icon={<AntDesign name="pluscircle" size={56} color="#F4C27F" />}
-        onPress={}
+        onPress={() => {
+          setModalVisible(true)
+        }}
       />
     </View>
   )

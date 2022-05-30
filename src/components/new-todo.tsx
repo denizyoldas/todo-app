@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text } from 'native-base'
+import { Box, Center, PresenceTransition, Text } from 'native-base'
 
 
 interface Props {
@@ -11,16 +11,28 @@ const NewTodo: React.FC<Props> = (props) => {
   const [isVisible, setIsVisible] = useState<boolean>()
 
   useEffect(() => {
-    if (props.isOpen !== isVisible) {
+    console.log(props.isOpen)
       setIsVisible(props.isOpen)
-    }
   }, [props.isOpen])
 
 
   return (
-    <>
-      <Text>This comp. is add for new todo</Text>
-    </>
+    <Center>
+    <PresenceTransition visible={isVisible} initial={{
+      opacity: 0
+    }}
+      animate={{
+        opacity: 1,
+        transition: {
+          duration: 250
+        }
+      }}
+    >
+      <Center>
+        <Box>This comp. is add for new todo</Box>
+      </Center>
+    </ PresenceTransition>
+    </Center>
   )
 }
 
