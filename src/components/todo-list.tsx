@@ -1,4 +1,4 @@
-import { Checkbox, Text, HStack, VStack } from 'native-base'
+import { Checkbox, Text, HStack, VStack, ScrollView } from 'native-base'
 import React, { useState } from 'react'
 import { ToDo } from '../types'
 import TodoItem from './todo-item'
@@ -22,10 +22,12 @@ export default function TodoList(props: Props) {
   }
 
   return (
-    <VStack space={2}>
-      {props.todos.map((todo, index) => (
-        <TodoItem key={todo.id} todo={todo} onTodoClick={checkBoxHandle} />
-      ))}
-    </VStack>
+    <ScrollView h="200">
+      <VStack space={2}>
+        {props.todos.map((todo, index) => (
+          <TodoItem key={todo.id} todo={todo} onTodoClick={checkBoxHandle} />
+        ))}
+      </VStack>
+    </ScrollView>
   )
 }

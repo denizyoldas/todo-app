@@ -1,15 +1,28 @@
 import { StatusBar } from 'expo-status-bar'
 import { useAtom } from 'jotai'
-import { StyleSheet, View, Text, TouchableOpacity, Alert } from 'react-native'
+import { StyleSheet, Platform, TouchableOpacity } from 'react-native'
 import { isLoggedInAtom } from '../redux'
 import TodoList from '../components/todo-list'
-import { AntDesign } from '@expo/vector-icons'
+import { AntDesign, Feather } from '@expo/vector-icons'
 import { ToDo } from '../types'
-import { Heading, Fab, Box, Avatar, Button, ZStack } from 'native-base'
-import React, { useState } from 'react'
+import {
+  Heading,
+  Fab,
+  Box,
+  Avatar,
+  Button,
+  Input,
+  PresenceTransition,
+  IconButton,
+  useColorModeValue,
+  View,
+  Text
+} from 'native-base'
+import React, { useCallback, useEffect, useState } from 'react'
 import { MaterialIcons } from '@expo/vector-icons'
-import AppModal from '../components/app-modal'
-import NewTodo from '../components/new-todo'
+import { useNavigation } from '@react-navigation/native'
+import { DrawerNavigationProp } from '@react-navigation/drawer'
+import * as ImagePicker from 'expo-image-picker'
 
 const TODOLIST: ToDo[] = [
   { id: 1, title: 'Buy milk', isCompleted: false, isDeleted: false },
@@ -22,53 +35,110 @@ const TODOLIST: ToDo[] = [
 export default function MainScreen() {
   const [isLoggedIn, setIsLoggedIn] = useAtom(isLoggedInAtom)
   const [btnFocus, setBtnFocus] = useState(false)
-  const [modalVisible, setModalVisible] = useState(false)
   const [todoList, setTodoList] = useState<ToDo[]>(TODOLIST)
+  const [isInputVisible, setIsInputVisible] = useState(false)
+  const [inputValue, setInputValue] = useState<string>()
+  const navigation = useNavigation<DrawerNavigationProp<{}>>()
+  const [image, setImage] = useState<string>('https://i.pravatar.cc/300')
+
+  useEffect(() => {
+    ;(async () => {
+      if (Platform.OS !== 'web') {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync()
+        if (status !== 'granted') {
+          alert(
+            'Sorry, Camera roll permissions are required to make this work!'
+          )
+        }
+      }
+    })()
+  }, [])
 
   const logOutHandle = () => {
     setIsLoggedIn(false)
   }
 
-  const addNewHandle = () => {
-    setModalVisible(true)
-  }
-
-  const modalSubmitHanlde = (text: string) => {
-    console.log(text)
+  const inputSubmitHandle = (_: any) => {
+    setInputValue('')
+    setIsInputVisible(false)
     setTodoList([
       ...todoList,
       {
         id: todoList.length + 1,
-        title: text,
+        title: inputValue || '',
         isCompleted: false,
         isDeleted: false
       }
     ])
   }
 
+  const inputChangeHandle = (text: string) => {
+    setInputValue(text)
+  }
+
+  const handlePressMenuButton = useCallback(() => {
+    navigation.openDrawer()
+  }, [navigation])
+
+  const chooseImg = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      aspect: [4, 3],
+      quality: 1,
+      allowsEditing: true
+    })
+
+    console.log(result)
+
+    if (!result.cancelled) {
+      setImage(result.uri)
+    }
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.userCard}>
-        <Avatar
-          size="2xl"
-          borderColor="#D8605B"
-          borderWidth={4}
-          padding={2}
-          mb="3"
-          mt="8"
-          backgroundColor="transparent"
-          alignSelf="center"
-          source={{
-            // uri: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80'
-            uri: 'https://i.pravatar.cc/300'
-          }}
-        />
+      <View
+        style={{
+          ...styles.userCard
+        }}
+        backgroundColor={useColorModeValue(
+          'rgba(244, 194, 127, 0.67)',
+          '#2E0249'
+        )}
+      >
+        <Box position="absolute" top="10" left="4">
+          <IconButton
+            onPress={handlePressMenuButton}
+            borderRadius={100}
+            _icon={{
+              as: Feather,
+              name: 'menu',
+              size: 6,
+              color: useColorModeValue('black', 'white')
+            }}
+          />
+        </Box>
+        <TouchableOpacity onPress={chooseImg}>
+          <Avatar
+            size="2xl"
+            borderColor="#D8605B"
+            borderWidth={4}
+            padding={2}
+            mb="3"
+            mt="8"
+            backgroundColor="transparent"
+            alignSelf="center"
+            source={{
+              uri: image
+            }}
+          />
+        </TouchableOpacity>
         <Text style={styles.fullName}>Monica Gamage</Text>
         <Text style={styles.username}>@monicagamage</Text>
         <Button
           onPress={logOutHandle}
-          onFocus={() => setBtnFocus(true)}
-          backgroundColor={btnFocus ? 'transparent' : '#F4C27F'}
+          backgroundColor="#F4C27F"
           borderRadius="22"
           marginTop="3"
           leftIcon={<MaterialIcons name="logout" size={12} color="black" />}
@@ -76,7 +146,10 @@ export default function MainScreen() {
           <Text> Log Out</Text>
         </Button>
       </View>
-      <View style={styles.content}>
+      <View
+        style={styles.content}
+        backgroundColor={useColorModeValue('white', '#570A57')}
+      >
         <Heading pb="10">Task List</Heading>
         <Box
           alignSelf="center"
@@ -86,16 +159,33 @@ export default function MainScreen() {
           padding={22}
           backgroundColor="white"
         >
+          {isInputVisible && (
+            <PresenceTransition
+              visible={isInputVisible}
+              initial={{ opacity: 0, translateX: -50 }}
+              animate={{
+                opacity: 1,
+                transition: {
+                  duration: 250
+                }
+              }}
+            >
+              <Input
+                placeholder="add task"
+                onChangeText={inputChangeHandle}
+                // onKeyPress={inputHandle}
+                border="1"
+                borderColor="amber.200"
+                mb="3"
+                returnKeyType="done"
+                onSubmitEditing={inputSubmitHandle}
+              />
+            </PresenceTransition>
+          )}
           <TodoList todos={todoList} />
         </Box>
       </View>
       <StatusBar style="auto" />
-      {/* <AppModal
-        isVisible={modalVisible}
-        onClose={v => setModalVisible(v)}
-        onSubmit={modalSubmitHanlde}
-      /> */}
-        <NewTodo isOpen={modalVisible} />
       <Fab
         renderInPortal={true}
         size="md"
@@ -103,7 +193,8 @@ export default function MainScreen() {
         shadow="0"
         icon={<AntDesign name="pluscircle" size={56} color="#F4C27F" />}
         onPress={() => {
-          setModalVisible(true)
+          // setModalVisible(true)
+          setIsInputVisible(v => !v)
         }}
       />
     </View>
@@ -114,18 +205,16 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     flexDirection: 'column',
-    backgroundColor: 'whute'
+    backgroundColor: 'white'
   },
   userCard: {
     flex: 0.4,
-    backgroundColor: 'rgba(244, 194, 127, 0.67)',
     height: 300,
     alignItems: 'center',
     justifyContent: 'center'
   },
   content: {
     flex: 0.6,
-    backgroundColor: 'white',
     height: 20,
     alignItems: 'center',
     paddingTop: 20
@@ -139,12 +228,12 @@ const styles = StyleSheet.create({
   },
   username: {
     fontWeight: '500',
-    fontSize: 10,
+    fontSize: 12,
     color: '#D8605B'
   },
   fullName: {
     fontWeight: '500',
-    fontSize: 14
+    fontSize: 16
   },
   logoutButton: {
     display: 'flex',
@@ -152,3 +241,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center'
   }
 })
+function dismissKeyboard() {
+  throw new Error('Function not implemented.')
+}
